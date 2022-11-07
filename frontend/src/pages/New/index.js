@@ -13,13 +13,13 @@ import { useHistory, useParams } from 'react-router-dom'
 
 export default function New() {
   const hist = useHistory();
-  const { id } =useParams();
+  const { id } = useParams();
   
   const [loadCustomers, setLoadCustomers] = useState(true);
   const [customers, setCustomers] = useState([]);
   const [customerSelected, setCustomerSelected] = useState(0);
 
-  const [assunto, setAssunto] = useState('Suporte');
+  const [assunto, setAssunto] = useState();
   const [status, setStatus] = useState('Aberto');
   const [complemento, setComplemento] = useState('');
 
@@ -65,7 +65,7 @@ export default function New() {
 
   async function loadId(lista) {
     await firebase.firestore().collection('chamados').doc(id).get().then((snapshot) => {
-      setAssunto(snapshot.data.assunto);
+      setAssunto(snapshot.data().assunto);
       setStatus(snapshot.data().status);
       setComplemento(snapshot.data().complemento);
 
@@ -90,7 +90,13 @@ export default function New() {
     e.preventDefault();
 
     if (idCustomer) {
-      await firebase.firestore().collection('chamados').doc(idCustomer).update({
+      console.log(customers[customerSelected].nomeFantasia, 'nome fantasia');
+      console.log(customers[customerSelected].id, 'id cliente');
+      console.log(assunto, 'assunto');
+      console.log(status, 'status')
+      console.log(complemento, 'complemento');
+      console.log(user.uid, 'id usuario');
+      await firebase.firestore().collection('chamados').doc(id).update({
         cliente: customers[customerSelected].nomeFantasia,
         clienteId: customers[customerSelected].id,
         assunto: assunto,
@@ -166,8 +172,8 @@ export default function New() {
             <label>Assunto</label>
             <select value={assunto} onChange={handleChangeSelect}>
               <option value="Suporte" key={1}>Suporte</option>
-              <option value="Suporte" key={2}>Financeiro</option>
-              <option value="Suporte" key={3}>Comercial</option>
+              <option value="Financeiro" key={2}>Financeiro</option>
+              <option value="Comercial" key={3}>Comercial</option>
             </select>
 
             <label>Status</label>
